@@ -6,6 +6,9 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/master' && github.run_id || github.ref }}
   cancel-in-progress: true
+  
+permissions:
+  id-token: write # requesting JWT in migration workflows for oidc auth with Azure
 
 jobs:
   PulumiPreview:
