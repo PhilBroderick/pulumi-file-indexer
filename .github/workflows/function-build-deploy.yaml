@@ -1,0 +1,40 @@
+name: Serverless Function - Build/Publish
+on:
+  push:
+  workflow_dispatch:
+
+env:
+  BUILD_CONFIGURATION: 'Release'
+  ARTIFACT_NAME: ServerlessFunction.App.${{ github.run_number }}
+
+permissions:
+  id-token: write # requesting JWT in migration workflows for oidc auth with Azure
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/master' && github.run_id || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  BuildPublish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install .NET Core 7 SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.15
+
+    - name: Restore Projects
+      run: dotnet restore src/ServerlessFileIndexer/ServerlessFileIndexer.csproj
+
+    - name: Build
+      run: dotnet build src/ServerlessFileIndexer/ServerlessFileIndexer.csproj --no-restore --configuration ${{ env.BUILD_CONFIGURATION }}
+
+    - name: Publish App
+      run: dotnet publish src/ServerlessFileIndexer/ServerlessFileIndexer.csproj --no-build --configuration ${{ env.BUILD_CONFIGURATION }} --output ${{ env.DOTNET_ROOT }}/app
+
+    - uses: actions/upload-artifact@v3
+      with:
+        path: ${{ env.DOTNET_ROOT }}/app
+        name: ${{ env.ARTIFACT_NAME }}

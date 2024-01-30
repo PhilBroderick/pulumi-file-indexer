@@ -1,0 +1,45 @@
+﻿name: Infrastructure - Build/Deploy
+on:
+  push:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/master' && github.run_id || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  PulumiPreview:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Pulumi Preview
+      uses: pulumi/actions@v4
+      with:
+        command: preview
+        stack-name: ${{ secrets.PULUMI_ORG }}/dev
+        work-dir: infra
+      env:
+        ARM_CLIENT_ID: ${{ secrets.SP_CLIENT_ID }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        ARM_USE_OIDC: true
+        
+  PulumiDeploy:
+    needs: PulumiPreview
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Pulumi Deploy
+        uses: pulumi/actions@v4
+        with:
+          command: up
+          stack-name: ${{secrets.PULUMI_ORG }}/dev
+          work-dir: infra
+        env:
+          ARM_CLIENT_ID: ${{ secrets.SP_CLIENT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_USE_OIDC: true
