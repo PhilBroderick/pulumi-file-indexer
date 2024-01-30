@@ -1,0 +1,9 @@
+config:
+  azure-native:location: UkSouth
+  file-indexer:file-upload-folder-name: file-uploads
+  file-indexer:storage-sku-name: Standard_LRS
+  file-indexer-sql:sql-admin-username: sql-admin
+  file-indexer-sql:database-tier: Standard
+  file-indexer-sql:sku-name: Standard
+  file-indexer-function:sku-name: Y1
+  file-indexer-function:tier: Dynamic
