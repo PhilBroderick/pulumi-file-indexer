@@ -146,6 +146,7 @@ internal class ServerlessFunctionComponent : ComponentResource
         
         var function = new WebApp($"{name}-function", new WebAppArgs
         {
+            Name = $"{name}-function",
             Kind = "FunctionApp",
             ResourceGroupName = resourceGroup.Name,
             ServerFarmId = asp.Id,
