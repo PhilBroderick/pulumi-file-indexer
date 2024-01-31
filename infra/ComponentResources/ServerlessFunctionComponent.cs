@@ -50,7 +50,7 @@ internal class ServerlessFunctionComponent : ComponentResource
         });
     }
 
-    private static ResourceGroup BuildResourceGroup(string name)
+    private ResourceGroup BuildResourceGroup(string name)
     {
         return new ResourceGroup(name, new()
         {
@@ -60,6 +60,9 @@ internal class ServerlessFunctionComponent : ComponentResource
                 { TagNames.Environment, TagValues.Environment },
                 { TagNames.CreatedBy, TagValues.Pulumi }
             }
+        }, new()
+        {
+            Parent = this
         });
     }
 
@@ -157,17 +160,13 @@ internal class ServerlessFunctionComponent : ComponentResource
                     },
                     new NameValuePairArgs
                     {
-                        Name = "FileUpload__FolderName",
+                        Name = "ContainerName",
                         Value = storage.FileUploadContainerName,
-                    }
-                },
-                ConnectionStrings = new[]
-                {
-                    new ConnStringInfoArgs
+                    },
+                    new NameValuePairArgs
                     {
-                        Name = "IndexerDatabase",
-                        Type = ConnectionStringType.SQLAzure,
-                        ConnectionString = databaseConnection.ConnectionString
+                        Name = "SqlConnectionString",
+                        Value = databaseConnection.ConnectionString
                     }
                 }
             },

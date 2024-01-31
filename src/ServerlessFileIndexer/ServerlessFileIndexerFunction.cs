@@ -18,7 +18,7 @@ namespace ServerlessFileIndexer
         }
 
         [Function("ServerlessFileIndexerFunction")]
-        public async Task Run([BlobTrigger("file-uploads/{name}", Connection = "StorageConnectionString")] string fileData, string name)
+        public async Task Run([BlobTrigger("%ContainerName%/{name}", Connection = "StorageConnectionString")] string fileData, string name)
         {
             _logger.LogInformation("C# Blob trigger function Processed blob: {Name}", name);
             
