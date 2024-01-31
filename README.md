@@ -30,3 +30,12 @@ I should be able to upload a file to the buekt and see the database entry get cr
 * C#/.NET 8.
 
 * GitHub Actions for CI/CD.
+
+## Running Locally
+
+To run the Function locally, the following pre-requisites are in place:
+* SQL Server must be running in Docker, with `SqlConnectionString` environment variable defined
+* Database has been created that matches connection string
+* EF Migrations ran against Docker SQL (Handled by Function startup)
+* .NET 7 + Azure tools installed
+* Azure Storage emulator must be running locally (Azurite).
