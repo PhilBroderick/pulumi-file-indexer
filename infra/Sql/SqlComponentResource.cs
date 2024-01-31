@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Pulumi;
+﻿using Pulumi;
 using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.Sql;
 using Pulumi.AzureNative.Sql.Inputs;
@@ -13,16 +12,13 @@ public class SqlComponentResource : ComponentResource
     public DatabaseConnection DatabaseConnection { get; init; }
 
     public SqlComponentResource(string name, SqlComponentResourceArgs args)
-        : base ($"philbroderick:azure:{ComponentName}", name)
+        : base ($"{FileIndexerConfig.PackageName}:azure:{ComponentName}", name)
     {
         var sqlAdminCredentials = SqlSecrets.Credentials;
         
         DatabaseConnection = BuildDatabase(name, args.ResourceGroup, args.Sku, sqlAdminCredentials);
         
-        RegisterOutputs(new Dictionary<string, object?>
-        {
-            { "DbConnection", DatabaseConnection.ConnectionString }
-        });
+        RegisterOutputs();
     }
     
     private DatabaseConnection BuildDatabase(string name, 
