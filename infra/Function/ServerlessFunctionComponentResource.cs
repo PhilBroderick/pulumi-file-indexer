@@ -1,4 +1,5 @@
 ﻿using Pulumi;
+using Pulumi.AzureNative.Insights;
 using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.Web;
 using Pulumi.AzureNative.Web.Inputs;
@@ -44,6 +45,13 @@ internal class ServerlessFunctionComponent : ComponentResource
             Parent = this
         });  
         
+        var appInsights = new Component("app-insights", new ComponentArgs
+        {
+            ApplicationType = ApplicationType.Web,
+            Kind = "web",
+            ResourceGroupName = resourceGroup.Name,
+        });
+        
         var function = new WebApp($"{name}-function", new WebAppArgs
         {
             Name = $"{name}-function",
@@ -68,7 +76,12 @@ internal class ServerlessFunctionComponent : ComponentResource
                     {
                         Name = "SqlConnectionString",
                         Value = databaseConnection.ConnectionString
-                    }
+                    },
+                    new NameValuePairArgs
+                    {
+                        Name = "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                        Value = Output.Format($"InstrumentationKey={appInsights.InstrumentationKey}"),
+                    },
                 }
             },
         }, new()

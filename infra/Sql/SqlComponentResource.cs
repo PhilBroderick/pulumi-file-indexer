@@ -30,7 +30,7 @@ public class SqlComponentResource : ComponentResource
         {
             ResourceGroupName = resourceGroup.Name,
             ServerName = name,
-            PublicNetworkAccess = ServerNetworkAccessFlag.Disabled,
+            PublicNetworkAccess = ServerNetworkAccessFlag.Enabled,
             AdministratorLogin = sqlAdminCredentials.SqlAdminUsername,
             AdministratorLoginPassword = sqlAdminCredentials.SqlAdminPassword
         }, new()
