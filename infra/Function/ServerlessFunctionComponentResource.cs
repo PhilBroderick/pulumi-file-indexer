@@ -83,6 +83,11 @@ internal class ServerlessFunctionComponent : ComponentResource
                     },
                     new NameValuePairArgs
                     {
+                        Name = "AzureWebJobsStorageConnectionString",
+                        Value = storage.ConnectionString
+                    },
+                    new NameValuePairArgs
+                    {
                         Name = "ContainerName",
                         Value = storage.FileUploadContainerName,
                     },
