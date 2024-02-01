@@ -12,14 +12,16 @@ public class StorageComponentResource : ComponentResource
     public StorageCredentials StorageCredentials { get; init; }
     
     [Output]
-    public Output<string> FileUploadContainerName { get; init; }
+    public Output<string> FileUploadContainerUrl { get; init; }
 
     public StorageComponentResource(string name, StorageComponentResourceArgs args)
         : base ($"{FileIndexerConfig.PackageName}:azure:{ComponentName}", name)
     {
         StorageCredentials = BuildStorageAccount(name, args.ResourceGroup, args.Sku, args.FileUploadContainerName);
-        FileUploadContainerName = StorageCredentials.FileUploadContainerName;
-        
+        FileUploadContainerUrl = Output.Tuple(StorageCredentials.StorageAccountBaseAddress,
+                StorageCredentials.FileUploadContainerName)
+            .Apply(t => $"{t.Item1}{t.Item1}");
+
         RegisterOutputs();
     }
     
@@ -53,6 +55,7 @@ public class StorageComponentResource : ComponentResource
             AccountName = storageAccount.Name,
             ContainerName = fileUploadContainerName,
             ResourceGroupName = resourceGroup.Name,
+            PublicAccess = PublicAccess.Blob
         }, new()
         {
             Parent = this
@@ -60,7 +63,7 @@ public class StorageComponentResource : ComponentResource
 
         var storageConnectionString = GetStorageConnectionString(resourceGroup.Name, storageAccount.Name);
 
-        return new (storageConnectionString, fileUploadBlobContainer.Name);
+        return new (storageConnectionString, storageAccount.PrimaryEndpoints.Apply(p => p.Blob),fileUploadBlobContainer.Name);
     }
     
     private static Output<string> GetStorageConnectionString(Input<string> resourceGroupName, Input<string> accountName)
