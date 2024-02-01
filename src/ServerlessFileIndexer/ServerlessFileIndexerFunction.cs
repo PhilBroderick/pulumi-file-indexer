@@ -28,10 +28,17 @@ namespace ServerlessFileIndexer
                 UploadedTimestamp = DateTime.UtcNow
             };
 
-            await _dbContext.FileIndices.AddAsync(fileIndex);
-            await _dbContext.SaveChangesAsync();
-            
-            _logger.LogInformation("New index added to database for blob: {Name}", name);
+            try
+            {
+                await _dbContext.FileIndices.AddAsync(fileIndex);
+                await _dbContext.SaveChangesAsync();
+
+                _logger.LogInformation("New index added to database for blob: {Name}", name);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding index to database for blob: {Name}", name);
+            }
         }
     }
 }
