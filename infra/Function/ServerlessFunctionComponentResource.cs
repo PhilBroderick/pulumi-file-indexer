@@ -54,7 +54,7 @@ internal class ServerlessFunctionComponent : ComponentResource
             RetentionInDays = 30,
             Sku = new WorkspaceSkuArgs
             {
-                Name = WorkspaceSkuNameEnum.Free
+                Name = WorkspaceSkuNameEnum.PerGB2018
             }
         });
 
