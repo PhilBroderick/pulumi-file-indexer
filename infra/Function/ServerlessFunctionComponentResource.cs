@@ -96,7 +96,18 @@ internal class ServerlessFunctionComponent : ComponentResource
                         Name = "APPLICATIONINSIGHTS_CONNECTION_STRING",
                         Value = Output.Format($"InstrumentationKey={appInsights.InstrumentationKey}"),
                     },
-                }
+                    new NameValuePairArgs
+                    {
+                        Name = "FUNCTIONS_EXTENSION_VERSION",
+                        Value = "~4"
+                    },
+                    new NameValuePairArgs
+                    {
+                        Name = "FUNCTIONS_WORKER_RUNTIME",
+                        Value = "dotnet-isolated"
+                    }
+                },
+                LinuxFxVersion = "DOTNET-ISOLATED|7.0"
             },
         }, new()
         {
