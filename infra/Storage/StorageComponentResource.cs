@@ -20,7 +20,7 @@ public class StorageComponentResource : ComponentResource
         StorageCredentials = BuildStorageAccount(name, args.ResourceGroup, args.Sku, args.FileUploadContainerName);
         FileUploadContainerUrl = Output.Tuple(StorageCredentials.StorageAccountBaseAddress,
                 StorageCredentials.FileUploadContainerName)
-            .Apply(t => $"{t.Item1}{t.Item1}");
+            .Apply(t => $"{t.Item1}{t.Item2}");
 
         RegisterOutputs();
     }
