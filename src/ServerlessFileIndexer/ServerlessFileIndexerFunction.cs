@@ -20,7 +20,7 @@ namespace ServerlessFileIndexer
         [Function("ServerlessFileIndexerFunction")]
         public async Task Run([BlobTrigger("%ContainerName%/{name}", Connection = "StorageConnectionString")] string fileData, string name)
         {
-            _logger.LogInformation("C# Blob trigger function Processed blob: {Name}", name);
+            _logger.LogInformation("Function triggered by new blob: {Name}", name);
             
             var fileIndex = new FileIndex
             {
@@ -30,6 +30,8 @@ namespace ServerlessFileIndexer
 
             await _dbContext.FileIndices.AddAsync(fileIndex);
             await _dbContext.SaveChangesAsync();
+            
+            _logger.LogInformation("New index added to database for blob: {Name}", name);
         }
     }
 }
