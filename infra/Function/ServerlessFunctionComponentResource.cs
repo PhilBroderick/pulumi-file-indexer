@@ -1,5 +1,7 @@
 ﻿using Pulumi;
 using Pulumi.AzureNative.Insights;
+using Pulumi.AzureNative.OperationalInsights;
+using Pulumi.AzureNative.OperationalInsights.Inputs;
 using Pulumi.AzureNative.Resources;
 using Pulumi.AzureNative.Web;
 using Pulumi.AzureNative.Web.Inputs;
@@ -45,11 +47,23 @@ internal class ServerlessFunctionComponent : ComponentResource
             Parent = this
         });  
         
+        // App Insights needs a LA workspace
+        var workspace = new Workspace("la-workspace", new WorkspaceArgs
+        {
+            ResourceGroupName = resourceGroup.Name,
+            RetentionInDays = 30,
+            Sku = new WorkspaceSkuArgs
+            {
+                Name = WorkspaceSkuNameEnum.Free
+            }
+        });
+
         var appInsights = new Component("app-insights", new ComponentArgs
         {
             ApplicationType = ApplicationType.Web,
             Kind = "web",
             ResourceGroupName = resourceGroup.Name,
+            WorkspaceResourceId = workspace.Id
         });
         
         var function = new WebApp($"{name}-function", new WebAppArgs
