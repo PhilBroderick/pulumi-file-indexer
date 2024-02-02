@@ -10,6 +10,9 @@ public class SqlComponentResource : ComponentResource
     private const string ComponentName = "FileIndexerDatabase";
     
     public DatabaseConnection DatabaseConnection { get; init; }
+    
+    [Output]
+    public Output<string> DbConnectionString { get; init; }
 
     public SqlComponentResource(string name, SqlComponentResourceArgs args)
         : base ($"{FileIndexerConfig.PackageName}:azure:{ComponentName}", name)
@@ -17,6 +20,8 @@ public class SqlComponentResource : ComponentResource
         var sqlAdminCredentials = SqlSecrets.Credentials;
         
         DatabaseConnection = BuildDatabase(name, args.ResourceGroup, args.Sku, sqlAdminCredentials);
+
+        DbConnectionString = DatabaseConnection.ConnectionString;
         
         RegisterOutputs();
     }
