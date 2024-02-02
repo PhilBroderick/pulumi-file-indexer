@@ -1,3 +1,5 @@
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using ServerlessFileIndexer.Data;
@@ -18,14 +20,22 @@ namespace ServerlessFileIndexer
         }
 
         [Function("ServerlessFileIndexerFunction")]
-        public async Task Run([BlobTrigger("%ContainerName%/{name}", Connection = "StorageConnectionString")] string fileData, string name)
+        public async Task Run([BlobTrigger("%ContainerName%/{name}", Connection = "StorageConnectionString")] 
+            BlobClient client, 
+            string name)
         {
             _logger.LogInformation("Function triggered by new blob: {Name}", name);
-            
+
+            var properties = await client.GetPropertiesAsync();
+
+            var uploadedTime = properties.HasValue
+                ? properties.Value.CreatedOn
+                : DateTimeOffset.UtcNow;
+
             var fileIndex = new FileIndex
             {
                 Name = name,
-                UploadedTimestamp = DateTime.UtcNow
+                UploadedTimestamp = uploadedTime.DateTime
             };
 
             try
