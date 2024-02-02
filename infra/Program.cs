@@ -42,6 +42,7 @@ return await Pulumi.Deployment.RunAsync(() =>
 
     return new Dictionary<string, object?>
     {
-        { StackOutputs.StorageUploadUrl, storageComponentResource.FileUploadContainerUrl }
+        { StackOutputs.StorageUploadUrl, storageComponentResource.FileUploadContainerUrl },
+        { StackOutputs.DbConnectionString, sqlComponentResource.DbConnectionString }
     };
 });
